@@ -1,1 +1,86 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>App Vivero PRO</title>
 
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#2563eb">
+
+<style>
+/* ====== ESTILOS (resumo, já validados) ====== */
+body{margin:0;font-family:system-ui;background:#f6f8ff;color:#0b1220}
+.wrap{max-width:1200px;margin:auto;padding:16px}
+.card{background:#fff;border-radius:16px;padding:14px;margin-bottom:12px}
+.btn{padding:10px 14px;border-radius:12px;border:1px solid #c7d2fe;font-weight:700}
+.btnPrimary{background:#2563eb;color:#fff;border:none}
+.badge{padding:6px 10px;border-radius:999px;font-weight:900}
+.ok{color:#0ea5e9}.warn{color:#f59e0b}.bad{color:#ef4444}
+.hide{display:none}
+canvas{width:100%}
+</style>
+</head>
+
+<body>
+<div class="wrap">
+
+<header>
+  <h1 data-i18n="app_title">App Vivero PRO</h1>
+  <p data-i18n="app_subtitle">Minijardín & Invernadero</p>
+
+  <select id="langSel">
+    <option value="es">ES</option>
+    <option value="pt">PT</option>
+    <option value="en">EN</option>
+  </select>
+
+  <button id="btnHome" data-i18n="home">Inicio</button>
+  <button id="btnHist" data-i18n="history">Historial</button>
+</header>
+
+<section id="screenHome">
+  <button id="goMin" class="btn btnPrimary">🌱 Minijardín</button>
+  <button id="goInv" class="btn btnPrimary">🌿 Invernadero</button>
+</section>
+
+<section id="screenMin" class="hide">
+  <h2>Minijardín</h2>
+  <input id="minT" placeholder="Temp °C"/>
+  <input id="minRH" placeholder="HR %"/>
+  <input id="minPAR" placeholder="PAR"/>
+  <button id="minCalc" class="btn btnPrimary" data-i18n="calc">Calcular</button>
+  <div id="minVPD">—</div>
+  <div id="minBadge" class="badge">—</div>
+  <div id="minSteps">—</div>
+</section>
+
+<section id="screenInv" class="hide">
+  <h2>Invernadero</h2>
+  <select id="invPhase">
+    <option>M1</option><option>M2</option><option>M3</option>
+  </select>
+  <input id="invT" placeholder="Temp °C"/>
+  <input id="invRH" placeholder="HR %"/>
+  <input id="invPAR" placeholder="PAR"/>
+  <button id="invCalc" class="btn btnPrimary" data-i18n="calc">Calcular</button>
+  <div id="invVPD">—</div>
+  <div id="invBadge" class="badge">—</div>
+</section>
+
+<section id="screenHist" class="hide">
+  <h2 data-i18n="dashboard">Dashboard VPD</h2>
+  <canvas id="vpdChart" height="180"></canvas>
+  <table>
+    <thead><tr><th>Fecha</th><th>Sector</th><th>VPD</th><th>Nota</th></tr></thead>
+    <tbody id="histBody"></tbody>
+  </table>
+</section>
+
+</div>
+
+<div id="toasts"></div>
+
+<script type="module" src="js/ui.js"></script>
+</body>
+</html>
