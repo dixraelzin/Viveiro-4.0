@@ -1,86 +1,234 @@
 <!doctype html>
 <html lang="es">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>App Vivero PRO</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>App Vivero PRO — Minijardín & Invernadero</title>
 
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#2563eb">
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#2563eb">
 
-<style>
-/* ====== ESTILOS (resumo, já validados) ====== */
-body{margin:0;font-family:system-ui;background:#f6f8ff;color:#0b1220}
-.wrap{max-width:1200px;margin:auto;padding:16px}
-.card{background:#fff;border-radius:16px;padding:14px;margin-bottom:12px}
-.btn{padding:10px 14px;border-radius:12px;border:1px solid #c7d2fe;font-weight:700}
-.btnPrimary{background:#2563eb;color:#fff;border:none}
-.badge{padding:6px 10px;border-radius:999px;font-weight:900}
-.ok{color:#0ea5e9}.warn{color:#f59e0b}.bad{color:#ef4444}
-.hide{display:none}
-canvas{width:100%}
-</style>
+  <style>
+    :root{
+      --bg:#f6f8ff;
+      --card:#ffffff;
+      --card2:#f3f6ff;
+      --text:#0b1220;
+      --muted:#4b5563;
+      --accent:#2563eb;
+      --accent2:#60a5fa;
+      --ok:#0ea5e9;
+      --warn:#f59e0b;
+      --bad:#ef4444;
+      --line:#d7def5;
+      --btn:#edf2ff;
+      --shadow:0 12px 30px rgba(10,25,60,.08);
+      --radius:18px;
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;
+      background:linear-gradient(180deg,var(--bg),#ffffff);
+      color:var(--text);
+    }
+    .wrap{max-width:1200px;margin:0 auto;padding:18px}
+    .top{display:flex;gap:12px;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap}
+    .brand{display:flex;gap:10px;align-items:center}
+    .logo{width:40px;height:40px;border-radius:14px;background:linear-gradient(135deg,var(--accent),var(--accent2))}
+    .title{font-weight:900}
+    .subtitle{color:var(--muted);font-size:13px}
+    .right{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+    .pill{padding:6px 10px;border-radius:999px;border:1px solid var(--line);font-size:12px;background:#fff}
+    .row{display:flex;flex-wrap:wrap;gap:12px}
+    .card{background:linear-gradient(180deg,var(--card),var(--card2));border:1px solid var(--line);border-radius:var(--radius);padding:14px;box-shadow:var(--shadow)}
+    .grow{flex:1 1 440px}
+    .half{flex:1 1 360px}
+    .btn{background:var(--btn);border:1px solid var(--line);border-radius:14px;padding:10px 12px;font-weight:800;cursor:pointer}
+    .btnPrimary{background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;color:#fff}
+    .btnDanger{background:linear-gradient(135deg,#ef4444,#f97316);border:none;color:#fff}
+    .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+    label{font-size:12px;color:var(--muted)}
+    input,select{width:100%;padding:10px;border-radius:12px;border:1px solid var(--line)}
+    .hide{display:none}
+    .badge{padding:6px 10px;border-radius:999px;font-weight:900;font-size:12px}
+    .ok{background:rgba(14,165,233,.1);color:var(--ok)}
+    .warn{background:rgba(245,158,11,.1);color:var(--warn)}
+    .bad{background:rgba(239,68,68,.1);color:var(--bad)}
+    table{width:100%;border-collapse:collapse}
+    th,td{border-bottom:1px solid var(--line);padding:6px;font-size:12px}
+    .toasts{position:fixed;right:14px;bottom:14px;display:flex;flex-direction:column;gap:8px}
+    .toast{background:#fff;border-radius:14px;padding:10px;border:1px solid var(--line)}
+    canvas{width:100%;height:180px}
+  </style>
 </head>
 
 <body>
+
 <div class="wrap">
+  <div class="top">
+    <div class="brand">
+      <div class="logo"></div>
+      <div>
+        <div class="title">App Vivero PRO</div>
+        <div class="subtitle">Minijardín & Invernadero</div>
+      </div>
+    </div>
+    <div class="right">
+      <span class="pill" id="nowPill">—</span>
+      <button class="btn" id="btnHome">Inicio</button>
+      <button class="btn" id="btnHist">Historial</button>
+    </div>
+  </div>
 
-<header>
-  <h1 data-i18n="app_title">App Vivero PRO</h1>
-  <p data-i18n="app_subtitle">Minijardín & Invernadero</p>
+  <!-- HOME -->
+  <div id="screenHome" class="row">
+    <div class="card grow">
+      <div class="grid">
+        <button class="btn btnPrimary" id="goMin">🌱 Minijardín</button>
+        <button class="btn btnPrimary" id="goInv">🌿 Invernadero</button>
+      </div>
+    </div>
+  </div>
 
-  <select id="langSel">
-    <option value="es">ES</option>
-    <option value="pt">PT</option>
-    <option value="en">EN</option>
-  </select>
+  <!-- MINIJARDÍN -->
+  <div id="screenMin" class="row hide">
+    <div class="card half">
+      <label>Temperatura (°C)</label>
+      <input id="minT">
+      <label>Humedad (%)</label>
+      <input id="minRH">
+      <label>PAR</label>
+      <input id="minPAR">
+      <button class="btn btnPrimary" id="minCalc">Calcular</button>
+      <button class="btn" id="minSave">Registrar</button>
+    </div>
+    <div class="card half">
+      <div>VPD</div>
+      <div id="minVPD">—</div>
+      <div id="minBadge" class="badge">—</div>
+      <p id="minSteps">—</p>
+    </div>
+  </div>
 
-  <button id="btnHome" data-i18n="home">Inicio</button>
-  <button id="btnHist" data-i18n="history">Historial</button>
-</header>
+  <!-- INVERNADERO -->
+  <div id="screenInv" class="row hide">
+    <div class="card half">
+      <select id="invPhase"><option>M1</option><option>M2</option><option>M3</option></select>
+      <input id="invT" placeholder="Temp">
+      <input id="invRH" placeholder="HR">
+      <button class="btn btnPrimary" id="invCalc">Calcular</button>
+      <button class="btn" id="invSave">Registrar</button>
+    </div>
+    <div class="card half">
+      <div id="invVPD">—</div>
+      <div id="invBadge" class="badge">—</div>
+      <p id="invSteps">—</p>
+    </div>
+  </div>
 
-<section id="screenHome">
-  <button id="goMin" class="btn btnPrimary">🌱 Minijardín</button>
-  <button id="goInv" class="btn btnPrimary">🌿 Invernadero</button>
-</section>
-
-<section id="screenMin" class="hide">
-  <h2>Minijardín</h2>
-  <input id="minT" placeholder="Temp °C"/>
-  <input id="minRH" placeholder="HR %"/>
-  <input id="minPAR" placeholder="PAR"/>
-  <button id="minCalc" class="btn btnPrimary" data-i18n="calc">Calcular</button>
-  <div id="minVPD">—</div>
-  <div id="minBadge" class="badge">—</div>
-  <div id="minSteps">—</div>
-</section>
-
-<section id="screenInv" class="hide">
-  <h2>Invernadero</h2>
-  <select id="invPhase">
-    <option>M1</option><option>M2</option><option>M3</option>
-  </select>
-  <input id="invT" placeholder="Temp °C"/>
-  <input id="invRH" placeholder="HR %"/>
-  <input id="invPAR" placeholder="PAR"/>
-  <button id="invCalc" class="btn btnPrimary" data-i18n="calc">Calcular</button>
-  <div id="invVPD">—</div>
-  <div id="invBadge" class="badge">—</div>
-</section>
-
-<section id="screenHist" class="hide">
-  <h2 data-i18n="dashboard">Dashboard VPD</h2>
-  <canvas id="vpdChart" height="180"></canvas>
-  <table>
-    <thead><tr><th>Fecha</th><th>Sector</th><th>VPD</th><th>Nota</th></tr></thead>
-    <tbody id="histBody"></tbody>
-  </table>
-</section>
-
+  <!-- HISTORIAL -->
+  <div id="screenHist" class="row hide">
+    <div class="card grow">
+      <canvas id="vpdChart"></canvas>
+      <table>
+        <thead>
+          <tr><th>Fecha</th><th>Sector</th><th>VPD</th></tr>
+        </thead>
+        <tbody id="histBody"></tbody>
+      </table>
+    </div>
+  </div>
 </div>
 
-<div id="toasts"></div>
+<div class="toasts" id="toasts"></div>
 
-<script type="module" src="js/ui.js"></script>
+<script>
+/* ================= UTIL ================= */
+const $=id=>document.getElementById(id);
+const nowISO=()=>new Date().toLocaleString();
+
+/* ================= VPD ================= */
+function calcVPD(T,RH){
+  const svp=0.6108*Math.exp((17.27*T)/(T+237.3));
+  return +(svp*(1-RH/100)).toFixed(2);
+}
+function vpdBand(v){
+  if(v<=0.6) return ["Húmedo","warn"];
+  if(v<=1.2) return ["Óptimo","ok"];
+  if(v<=1.6) return ["Atención","warn"];
+  return ["Crítico","bad"];
+}
+
+/* ================= TOAST ================= */
+function toast(t,m,c){
+  const d=document.createElement("div");
+  d.className=`toast ${c}`;
+  d.innerHTML=`<b>${t}</b><div>${m}</div>`;
+  $("toasts").appendChild(d);
+  setTimeout(()=>d.remove(),3000);
+}
+
+/* ================= HIST ================= */
+const KEY="vivero_hist";
+const getHist=()=>JSON.parse(localStorage.getItem(KEY)||"[]");
+const saveHist=r=>{
+  const h=getHist();h.unshift(r);
+  localStorage.setItem(KEY,JSON.stringify(h));
+};
+
+/* ================= NAV ================= */
+function show(s){
+  ["Home","Min","Inv","Hist"].forEach(x=>$("screen"+x).classList.add("hide"));
+  $("screen"+s).classList.remove("hide");
+}
+btnHome.onclick=()=>show("Home");
+btnHist.onclick=()=>{renderHist();show("Hist")};
+goMin.onclick=()=>show("Min");
+goInv.onclick=()=>show("Inv");
+
+/* ================= MIN ================= */
+minCalc.onclick=()=>{
+  const v=calcVPD(+minT.value,+minRH.value);
+  const [txt,cls]=vpdBand(v);
+  minVPD.textContent=v;
+  minBadge.textContent=txt;
+  minBadge.className=`badge ${cls}`;
+  minSteps.textContent="Seguir ventilación recomendada";
+};
+minSave.onclick=()=>{
+  saveHist({time:nowISO(),sector:"Minijardín",VPD:minVPD.textContent});
+  toast("Guardado","Registro añadido","ok");
+};
+
+/* ================= INV ================= */
+invCalc.onclick=()=>{
+  const v=calcVPD(+invT.value,+invRH.value);
+  const [txt,cls]=vpdBand(v);
+  invVPD.textContent=v;
+  invBadge.textContent=txt;
+  invBadge.className=`badge ${cls}`;
+  invSteps.textContent="Ajustar gradualmente";
+};
+invSave.onclick=()=>{
+  saveHist({time:nowISO(),sector:"Invernadero",VPD:invVPD.textContent});
+  toast("Guardado","Registro añadido","ok");
+};
+
+/* ================= HIST UI ================= */
+function renderHist(){
+  histBody.innerHTML="";
+  getHist().forEach(r=>{
+    histBody.innerHTML+=`<tr><td>${r.time}</td><td>${r.sector}</td><td>${r.VPD}</td></tr>`;
+  });
+}
+
+/* ================= INIT ================= */
+$("nowPill").textContent=nowISO();
+show("Home");
+</script>
+
 </body>
 </html>
